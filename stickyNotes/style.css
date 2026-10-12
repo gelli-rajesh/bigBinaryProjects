@@ -1,0 +1,74 @@
+body {
+    margin: 0;
+    color: #333;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+}
+
+form {
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+    margin: 30px auto;
+    background: white;
+}
+
+h1 {
+color: #0d47a1;
+    text-align: center;
+}
+
+label {
+display: block;
+    padding: 8px 0;color: #0d47a1;
+}
+
+input, textarea {
+    width: 90%;
+    padding: 10px;
+    background: #f3f4f6;
+    border: 1px solid #3498db;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border: 2px solid #ff5722;
+}
+
+form button {
+    width: 95%;padding: 12px;
+margin-top: 15px;
+    background: #ff6b00;color: white;
+    border: none;
+}
+
+.hidden {
+display: none;
+}
+
+#errorMessage {
+    padding: 15px;
+    background: linear-gradient(110deg, #568fd1, #8050ad);
+    color: white;
+    text-align: center;
+}
+
+#errorMessage button {
+    float: right;
+background: none;    border: none;color: white;
+}
+
+#invitation {
+    width: 80%;max-width: 400px;
+    padding: 20px;margin: 30px auto;
+    background: white;
+    border: 3px solid #e74c3c;
+}
+
+#invitation h2 {  color: #e74c3c;
+    text-align: center;
+}
+
+#invitation h3 {
+    color: #0d47a1;
+  text-align: center;
+}

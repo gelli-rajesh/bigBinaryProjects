@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Event Invitation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="errorMessage" class="hidden">
+        Please fill in All fields  <button id="closeError" type="button">X</button>
+    </div>
+
+    <form id="eventForm"> <h1>Create an  Invite of event   </h1>
+
+<label>Event Name</label>
+<input type="text" id="eventName">
+<label>Event Date</label>
+<input type="date" id="eventDate">
+<label>Start Time</label>
+<input type="time" id="startTime">
+
+<label>End Time</label>
+<input type="time" id="endTime">
+
+<label>Description</label>
+<textarea id="description"></textarea>
+
+<label>Location</label>
+<input type="text" id="location">
+
+<button type="submit">create Invitaion</button>
+    </form>
+
+    <div id="invitation" class="hidden">
+        <h2>You Are invted!</h2>
+        <h3 id="inviteEventName"></h3>
+        <p id="inviteDate"></p>
+        <p id="inviteTime"></p>
+        <p id="inviteLocation"></p>
+        <p id="inviteDescription"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
