@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Currency Converter</title>
-  <!-- Google Fonts: Lato -->
+  
   <link rel="preconnect" href="https://googleapis.com">
   <link rel="preconnect" href="https://gstatic.com" crossorigin>
   <link href="https://googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
     </header>
 
     <form id="converter-form" onsubmit="return false;">
-      <!-- Amount Input Section -->
       <div class="form-group">
         <label for="amount">Enter amount</label>
         <input 
@@ -32,7 +31,7 @@
         >
       </div>
 
-      <!-- Currency Selection Controls -->
+      
       <div class="currency-selectors">
         <div class="form-group select-box">
           <label for="from-currency">From</label>
@@ -40,7 +39,7 @@
             <span id="from-flag" class="currency-flag">🏳️</span>
             <select id="from-currency" required>
               <option value="" disabled selected>Select Source</option>
-              <!-- Populated dynamically via JS -->
+              
             </select>
           </div>
         </div>
@@ -55,18 +54,18 @@
             <span id="to-flag" class="currency-flag">🏳️</span>
             <select id="to-currency" required>
               <option value="" disabled selected>Select Target</option>
-              <!-- Populated dynamically via JS -->
+              
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Action Button -->
+      
       <button type="submit" id="convert-btn">Convert</button>
     </form>
 
-    <!-- Dynamic Output Area -->
     <div class="output-container">
+      <p id="status" class=" hidden"></p>
       <p id="result-message" class="result-text hidden"></p>
       <p id="error-message" class="error-text hidden"></p>
     </div>
