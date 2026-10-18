@@ -1,160 +1,23 @@
-// CONFIGURATION: Replace placeholders with your acquired API Keys
-const REST_COUNTRIES_API_KEY = "YOUR_REST_COUNTRIES_API_KEY";
-const EXCHANGE_RATE_API_KEY = "YOUR_EXCHANGE_RATE_API_KEY";
 
-// Application State Store
-let currencyDataMap = {}; 
+const REST_COUNTRIES_API_KEY = "rc_live_2580d8943ae3415fb4ece813ac43587d";
+const EXCHANGE_RATE_API_KEY = "23be3c0c3b33dd42223f74d6";
 
-// DOM Element Selectors
+
+
+
+
 const fromSelect = document.getElementById('from-currency');
 const toSelect = document.getElementById('to-currency');
-const fromFlag = document.getElementById('from-flag');
-const toFlag = document.getElementById('to-flag');
 const amountInput = document.getElementById('amount');
 const convertBtn = document.getElementById('convert-btn');
 const resultMessage = document.getElementById('result-message');
 const errorMessage = document.getElementById('error-message');
 
-// Initialize App
-document.addEventListener('DOMContentLoaded', () => {
-  initializeCurrencyDropdowns();
-  
-  // Set up event listeners
-  convertBtn.addEventListener('click', handleConversion);
-  fromSelect.addEventListener('change', () => updateFlagDisplay('from'));
-  toSelect.addEventListener('change', () => updateFlagDisplay('to'));
-});
-
-/**
- * Fetches country/currency data and initializes selector menus
- */
-async function initializeCurrencyDropdowns() {
-  try {
-    // Using standard fields filter to minimize download payload size
-    const response = await fetch(`https://restcountries.com{REST_COUNTRIES_API_KEY}`);
-    
-    if (!response.ok) throw new Error("Failed to capture country asset listings.");
-    
-    const countries = await response.json();
-    
-    // Parse response into structured structural Map
-    countries.forEach(country => {
-      if (country.currencies) {
-        Object.keys(country.currencies).forEach(code => {
-          if (!currencyDataMap[code]) {
-            currencyDataMap[code] = {
-              code: code,
-              name: country.currencies[code].name || code,
-              flag: country.flag || "🏳️"
-            };
-          }
-        });
-      }
-    });
-
-    // Sort options alphabetically by currency ticker code
-    const sortedCurrencies = Object.values(currencyDataMap).sort((a, b) => a.code.localeCompare(b.code));
-
-    // Inject structures into Document Fragments
-    populateMenuOptions(fromSelect, sortedCurrencies, 'USD');
-    populateMenuOptions(toSelect, sortedCurrencies, 'INR');
-
-    // Fire initial flag updates
-    updateFlagDisplay('from');
-    updateFlagDisplay('to');
-
-  } catch (error) {
-    showError("An error occurred while loading currency options. Please try again later.");
-    console.error("Dropdown Initialization Failure:", error);
-  }
-}
-
-/**
- * Builds selection options element nodes safely
- */
-function populateMenuOptions(selectElement, currencyList, defaultSelection) {
-  selectElement.innerHTML = ''; // Wipe presets
-  
-  currencyList.forEach(currency => {
-    const option = document.createElement('option');
-    option.value = currency.code;
-    option.textContent = `${currency.code} - ${currency.name}`;
-    if (currency.code === defaultSelection) {
-      option.selected = true;
-    }
-    selectElement.appendChild(option);
-  });
-}
-
-/**
- * Dynamically swaps the decorative flag symbol matching current choice lists
- */
-function updateFlagDisplay(direction) {
-  if (direction === 'from') {
-    const selectedCode = fromSelect.value;
-    fromFlag.textContent = currencyDataMap[selectedCode]?.flag || "🏳️";
-  } else if (direction === 'to') {
-    const selectedCode = toSelect.value;
-    toFlag.textContent = currencyDataMap[selectedCode]?.flag || "🏳️";
-  }
-}
-
-/**
- * Performs target API extraction and evaluation actions
- */
-async function handleConversion() {
-  // Clear layout visibility rules
-  clearDisplays();
-
-  const amountValue = parseFloat(amountInput.value);
-  const fromCurrency = fromSelect.value;
-  const toCurrency = toSelect.value;
-
-  // Enforce validation constraints
-  if (isNaN(amountValue) || amountValue <= 0) {
-    showError("Please enter a valid amount greater than 0.");
-    return;
-  }
-  if (!fromCurrency || !toCurrency) {
-    showError("Please select both target currency boxes before proceeding.");
-    return;
-  }
-
-  try {
-    convertBtn.textContent = "Processing...";
-    convertBtn.disabled = true;
-
-    const response = await fetch(`https://exchangerate-api.com{EXCHANGE_RATE_API_KEY}/pair/${fromCurrency}/${toCurrency}`);
-    
-    if (!response.ok) throw new Error("Conversion platform rejected operational exchange parameters.");
-    
-    const data = await response.json();
-
-    if (data.result === "success") {
-      const rate = data.conversion_rate;
-      const totalConverted = (amountValue * rate).toFixed(2);
-      
-      // Formatting utilizing standard localized formatting parameters
-      const localizedAmount = amountValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-      const localizedResult = parseFloat(totalConverted).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-      showResult(`${localizedAmount} ${fromCurrency} = ${localizedResult} ${toCurrency}`);
-    } else {
-      throw new Error(data['error-type'] || "Inbound rate parsing failure.");
-    }
-
-  } catch (error) {
-    showError("An error occurred, please try again later");
-    console.error("Conversion Calculation Loop Breakdown:", error);
-  } finally {
-    convertBtn.textContent = "Convert";
-    convertBtn.disabled = false;
-  }
-}
 
 function showResult(message) {
   resultMessage.textContent = message;
   resultMessage.classList.remove('hidden');
+ 
 }
 
 function showError(message) {
@@ -168,3 +31,116 @@ function clearDisplays() {
   errorMessage.classList.add('hidden');
   errorMessage.textContent = '';
 }
+async function fetchCurrencies(){
+try {
+        const response = await fetch(
+                            "https://api.restcountries.com/currencies/v1/symbols",
+            {
+                headers: {
+                    Authorization: `Bearer ${REST_COUNTRIES_API_KEY}`
+                }
+            }
+        );
+
+          if (!response.ok) {
+          
+            throw new Error(`Currency API failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const currencies = data.data?.objects;
+
+        if (!Array.isArray(currencies)) {
+            console.error("Unexpected API response:", data);
+            throw new Error("Invalid currency data received.");
+        }
+
+        addOptions(currencies);
+    } catch (error) {
+        console.error(error);
+        showError("some error in fetching currencies.");
+    }
+
+}
+
+function addOptions(currencies) {
+    const currencies_having_all_fileds = currencies.filter((x) => x.code && x.name);
+
+    currencies_having_all_fileds.forEach(currency => {
+        const text = `${currency.symbol} ${currency.name}`;
+
+        const fromOption = document.createElement("option");
+        fromOption.value = currency.code;
+        fromOption.textContent = text;
+
+        const toOption = document.createElement("option");
+        toOption.value = currency.code;
+        toOption.textContent = text;
+
+        fromSelect.appendChild(fromOption);
+        toSelect.appendChild(toOption);
+    });
+
+}
+ async function conversion(){
+
+clearDisplays();
+
+   
+    const amount = Number(amountInput.value.trim());
+    const from = fromSelect.value;
+    console.log(from);
+    const to = toSelect.value;
+    if (amountInput.value.trim() === "" || isNaN(amount) || amount <= 0) {
+    alert("Enter a valid positive amount");
+    return;
+     }
+
+    if (!from || !to) {
+    alert("Select both currencies");
+    return;
+    }
+
+    if (from === to) {
+    alert("Select different currencies");
+    return;
+    }
+
+    try {
+        const fromRateApi =`https://v6.exchangerate-api.com/v6/${EXCHANGE_RATE_API_KEY}/latest/${from}`;
+
+        const response = await fetch(fromRateApi);
+        if (!response.ok) {
+          
+            throw new Error(`Rates API failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.result !== "success" || !data.conversion_rates) {
+            throw new Error(data["error-type"] || `Rates API failed: ${response.status}`);
+        }
+
+        const rate = data.conversion_rates[to];
+
+        if (typeof rate !== "number") {
+            throw new Error("Exchange rate not available for this currency.");
+        }
+
+        const exchangeValue = amount * rate;
+
+        const statement=`${amount} ${from} = ${exchangeValue} ${to}`;
+        showResult(statement);
+    } catch (error) {
+        console.error(error);
+       
+    } 
+}
+
+convertBtn.addEventListener('click',conversion);
+fetchCurrencies();
+
+
+
+
+
